@@ -1,5 +1,5 @@
-import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import PropTypes from "prop-types";
 import { connectWebSocket } from "../context/WebsocketStore"; // Import WebSocket function
 import "../styles/RoomForm.css";
 const wsBaseUrl = import.meta.env.VITE_WS_BASE_URL;
@@ -11,12 +11,16 @@ const RoomForm = ({ title, endpoint, playerName, setPlayerName, numPlayers, setN
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    const queryParams = new URLSearchParams({
-      player_name: playerName,
-      room_id: endpoint === "join" ? roomId : undefined,
-      max_players: endpoint === "create" ? numPlayers : undefined,
-    }).toString();
-             //wsbaseurl           
+    const params = new URLSearchParams();
+    params.append("player_name", playerName);
+    if (endpoint === "join" && roomId) {
+      params.append("room_id", roomId);
+    }
+    if (endpoint === "create" && numPlayers) {
+      params.append("max_players", numPlayers);
+    }
+
+    const queryParams = params.toString();
     const websocketUrl = `${wsBaseUrl}/${endpoint}?${queryParams}`;
     console.log("Connecting to WebSocket:", websocketUrl);
 
@@ -79,3 +83,14 @@ const RoomForm = ({ title, endpoint, playerName, setPlayerName, numPlayers, setN
 };
 
 export default RoomForm;
+
+RoomForm.propTypes = {
+  title: PropTypes.string.isRequired,
+  endpoint: PropTypes.string.isRequired,
+  playerName: PropTypes.string.isRequired,
+  setPlayerName: PropTypes.func.isRequired,
+  numPlayers: PropTypes.number,
+  setNumPlayers: PropTypes.func,
+  roomId: PropTypes.string,
+  setRoomId: PropTypes.func,
+};
