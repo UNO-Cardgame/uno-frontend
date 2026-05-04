@@ -3,7 +3,6 @@ import PropTypes from "prop-types";
 import { connectWebSocket } from "../context/WebsocketStore"; // Import WebSocket function
 import "../styles/RoomForm.css";
 const wsBaseUrl = import.meta.env.VITE_WS_BASE_URL;
-console.log(wsBaseUrl,"URL Logged")
 
 const RoomForm = ({ title, endpoint, playerName, setPlayerName, numPlayers, setNumPlayers, roomId, setRoomId }) => {
   const navigate = useNavigate();
@@ -19,9 +18,11 @@ const RoomForm = ({ title, endpoint, playerName, setPlayerName, numPlayers, setN
     if (endpoint === "create" && numPlayers) {
       params.append("max_players", numPlayers);
     }
+    // Pass JWT as query param — browsers can't set headers on WebSocket upgrades.
+    const token = localStorage.getItem("uno_token");
+    if (token) params.append("token", token);
 
-    const queryParams = params.toString();
-    const websocketUrl = `${wsBaseUrl}/${endpoint}?${queryParams}`;
+    const websocketUrl = `${wsBaseUrl}/${endpoint}?${params.toString()}`;
     console.log("Connecting to WebSocket:", websocketUrl);
 
     // Connect to WebSocket

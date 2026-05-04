@@ -3,21 +3,25 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import CreateRoom from './components/CreateRoom';
 import JoinRoom from './components/JoinRoom';
 import Game from './components/Game';
-//import { WebSocketProvider } from "./context/WebSocketContext";
 import StartPage from './components/StartPage';
+import LandingPage from './components/LandingPage';
+import AuthCallback from './components/AuthCallback';
 
 function App() {
-  return ( 
- 
+  return (
     <Router>
       <Routes>
+        {/* Auth flow */}
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/auth/callback" element={<AuthCallback />} />
+
+        {/* Game flow (requires auth) */}
+        <Route path="/home" element={<StartPage />} />
         <Route path="/create-room" element={<CreateRoom />} />
         <Route path="/join-room" element={<JoinRoom />} />
         <Route path="/game" element={<Game />} />
-        <Route path="/" element={<StartPage />} />
       </Routes>
-    </Router> 
-   
+    </Router>
   );
 }
 
